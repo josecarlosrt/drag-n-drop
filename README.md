@@ -2,7 +2,7 @@
 
 A high-performance, accessible Drag & Drop editor prototype built with React, Vite, and `@dnd-kit`. 
 
-**Live Demo:** newsletterdrop.netlify.app
+**Live Demo:** [newsletterdrop.netlify.app](https://newsletterdrop.netlify.app/)
 
 ## 🧠 Architecture & Technical Decisions
 
