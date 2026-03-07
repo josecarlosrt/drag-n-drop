@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# 🚀 Lightweight Drag & Drop Newsletter Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, accessible Drag & Drop editor prototype built with React, Vite, and `@dnd-kit`. 
 
-Currently, two official plugins are available:
+**Live Demo:** [Inserta aquí tu link de Vercel/Netlify]
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🧠 Architecture & Technical Decisions
 
-## React Compiler
+This project was built to demonstrate modern React architecture, focusing on performance, state management, and testability—key requirements for building scalable tools like a newsletter editor.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Drag & Drop Engine (`@dnd-kit`)
+Instead of relying on heavy, legacy HTML5 drag-and-drop wrappers, I chose `@dnd-kit`. 
+* **Why?** It's modular, headless, and doesn't mutate the DOM directly. It relies on React state, making it extremely fast and accessible out of the box (screen-reader friendly).
 
-## Expanding the ESLint configuration
+### 2. State Management (Data over DOM)
+The canvas state is managed as an array of JSON objects (e.g., `{ id: '1', type: 'button', content: '...' }`).
+* **Why?** Storing structural data rather than raw HTML nodes allows for lightning-fast React reconciliation, easy serialization for REST APIs, and straightforward implementation of features like Undo/Redo or exporting to email-safe HTML.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 3. Performance Optimization (Addressing large component trees)
+Rendering hundreds of blocks in an editor can cause the main thread to bottleneck. To mitigate this:
+* **Memoization:** Components rendered inside the droppable canvas are wrapped in `React.memo` to prevent unnecessary re-renders when the drag state of other components changes.
+* **Scalability:** For a production environment with thousands of nodes, this architecture is primed for DOM virtualization (e.g., `react-window`), ensuring only visible blocks are rendered.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧪 Testing Strategy
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Writing maintainable code means writing testable code. This prototype includes a testing suite configured with **Vitest** and **React Testing Library**.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **Unit Tests (`Canvas.test.tsx`):** Verifies that the Canvas component correctly renders the empty state placeholder and accurately maps through the state array when blocks are passed via props.
+* **Why Vitest?** It provides instant feedback loops and native support for Vite's module resolution and TypeScript, making the testing experience seamless.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 💻 Tech Stack
+* **Framework:** React 18 + TypeScript + Vite
+* **UI/Styling:** Tailwind CSS + shadcn/ui + Lucide Icons
+* **DND Logic:** `@dnd-kit/core` & `@dnd-kit/sortable`
+* **Testing:** Vitest + jsdom + React Testing Library
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Running Locally
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start the dev server: `npm run dev`
+4. Run tests: `npm run test`
