@@ -3,6 +3,7 @@ import { DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, defaul
 import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { Sidebar } from './components/Sidebar';
 import { Canvas, type BlockData } from './components/Canvas';
+import { Button } from '@/components/ui/button';
 
 function App() {
   const [blocks, setBlocks] = useState<BlockData[]>([]);
@@ -53,8 +54,6 @@ function App() {
         const overIndex = blocks.findIndex(b => b.id === over.id);
         if (overIndex !== -1) {
           const newArray = [...blocks];
-          // We can insert before or after depending on the position, 
-          // but for simplicity we'll insert before.
           newArray.splice(overIndex, 0, newBlock);
           setBlocks(newArray);
         } else {
@@ -62,7 +61,6 @@ function App() {
         }
       }
     } else {
-      // Reording existing canvas items
       if (active.id !== over.id) {
         setBlocks((blocks) => {
           const oldIndex = blocks.findIndex((b) => b.id === active.id);
@@ -73,28 +71,45 @@ function App() {
     }
   };
 
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex h-screen w-full bg-slate-50 font-sans">
-        <Sidebar />
-        <Canvas blocks={blocks} />
-      </div>
+  const handleRemoveBlock = (id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id));
+  };
 
-      <DragOverlay dropAnimation={{
-        sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
-      }}>
-        {activeId ? (
-          <div className="p-4 bg-white border rounded shadow-lg opacity-90 min-w-40 flex items-center justify-center font-medium shadow-xl">
-            Dragging {activeType} Block
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+  return (
+    <div className="flex flex-col h-screen w-full font-sans bg-gray-50">
+      <header className="flex items-center justify-between px-6 py-4 bg-white border-b shadow-sm z-10 shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">N</div>
+          <span className="font-semibold text-lg text-slate-800">Newsletter Builder</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline">Preview</Button>
+          <Button>Save Settings</Button>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <Sidebar />
+          <Canvas blocks={blocks} onRemove={handleRemoveBlock} />
+
+          <DragOverlay dropAnimation={{
+            sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
+          }}>
+            {activeId ? (
+              <div className="p-4 bg-white border rounded shadow-lg opacity-90 min-w-40 flex items-center justify-center font-medium shadow-xl">
+                Dragging {activeType} Block
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
+    </div>
   );
 }
 
