@@ -6,7 +6,7 @@ A high-performance, accessible Drag & Drop editor prototype built with React, Vi
 
 ## 🧠 Architecture & Technical Decisions
 
-This project was built to demonstrate modern React architecture, focusing on performance, state management, and testability—key requirements for building scalable tools like a newsletter editor.
+This project was built to demonstrate modern React architecture, focusing on performance, state management, and testability-key requirements for building scalable tools like a newsletter editor.
 
 ### 1. Drag & Drop Engine (`@dnd-kit`)
 Instead of relying on heavy, legacy HTML5 drag-and-drop wrappers, I chose `@dnd-kit`. 
